@@ -48,7 +48,7 @@ else{
         if(data.success){
           toast.success('Register succesful')
           localStorage.setItem('token',data.token)
-          localStorage.setItem('admin',data.admin)
+          localStorage.setItem('admin',JSON.stringify(data.admin))
           setredirect(true)
           
         }

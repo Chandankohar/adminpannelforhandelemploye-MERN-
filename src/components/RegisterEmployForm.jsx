@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 const RegisterEmployForm = () => {
   const {id} =useParams()
   const [redirect,setredirect]=useState(false)
-  const [photos, setPhotos] = useState(null);
+  const [photos, setPhotos] = useState('');
   const checkboxes = ['MCA', 'BCA', 'BSC'];
   const [checkbox,setcheckbox]=useState('MCA')
   
@@ -21,8 +21,39 @@ const RegisterEmployForm = () => {
   })
   const {username,email,contact,designation,gender,image,course}=employeData
 
+  useEffect(() => {
+    if (!id) {
+      return;
+    }
+    
+    axios.get(`http://localhost:4000/employe/singleemploye/${id}`).then((response) => {
+      const { employe } = response.data;
+      // update the state of formData
+      
+      for (let key in employeData) {
+        if (employe.hasOwnProperty(key)) {
+          
+          setemployeData((prev) => ({
+            ...prev,
+            [key]: employe[key],
+          }));
+        }
+      }
+      setemployeData((prev) => ({
+        ...prev,
+        username:employe.name,
+      }))
+
+      // update photos state separately
+      
+
+    });
+  }, [id]);
+
+
+
   const handleImageChange = async(e) => {
-    e.preventDefault()
+   
     try{
     const file=e.target.files[0];
     const formData = new FormData();
@@ -32,6 +63,7 @@ const RegisterEmployForm = () => {
   })
   console.log(data)
   setPhotos(data)
+  toast.success('image uploaded successfully')
   console.log(photos)
 }
   catch (err) {
@@ -48,7 +80,7 @@ const RegisterEmployForm = () => {
 }
 
   const handelOnchange=(e)=>{
-    
+    e.preventDefault()
  const{name,value}=e.target
    setemployeData({...employeData,[name]:value})
    
@@ -88,30 +120,7 @@ const RegisterEmployForm = () => {
     }
       }
     
-      useEffect(() => {
-        if (!id) {
-          return;
-        }
-        
-        axios.get(`http://localhost:4000/employe/singleemploye/${id}`).then((response) => {
-          const { employe } = response.data;
-          // update the state of formData
-          setemployeData({...employeData,username:employe.name})
-          for (let key in employeData) {
-            if (employe.hasOwnProperty(key)) {
-              
-              setemployeData((prev) => ({
-                ...prev,
-                [key]: employe[key],
-              }));
-            }
-          }
-    
-          // update photos state separately
-          
-    
-        });
-      }, [id]);
+     
 
   const handelSubmit=async(e)=>{
     e.preventDefault()
@@ -177,6 +186,7 @@ const RegisterEmployForm = () => {
         </select>
   </div>
   <div className="mb-3">
+    <p>Gender</p>
   <label htmlFor="male">
          Male
           <input
@@ -188,6 +198,7 @@ const RegisterEmployForm = () => {
             onChange={handelOnchange}
           />
         </label>
+        <br/>
         <label htmlFor="female">
           Female
           <input
@@ -205,7 +216,7 @@ const RegisterEmployForm = () => {
    Course <br/>
   
          
-          {checkboxes.map((option, index) => (
+          {checkboxes.map((option, index) => (<>
         <label htmlFor={option} key={index}>
           <input
           id={option}
@@ -217,6 +228,8 @@ const RegisterEmployForm = () => {
           />
           {option}
         </label>
+        <br/>
+        </> 
       ))}
   </div>
   <div className="mb-3">

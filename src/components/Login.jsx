@@ -41,8 +41,13 @@ else{
         const res = await axios.post('http://localhost:4000/admin/login',logindata)
         
         if(res.data.success){
+          localStorage.setItem('token',res.data.token)
+          localStorage.setItem('admin',JSON.stringify(res.data.admin))
           toast.success('login succesful')
+          
           setredirect(true)
+          
+         
           
         }
        

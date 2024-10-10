@@ -1,12 +1,15 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 const EmployDetails = () => {
+  
   const [employes,setemployes]=useState(null)
   const [searchText, setSearchText] = useState('');
 const [searchTimeout, setSearchTimeout] = useState(null);
+
+
 
   const getEmployees=async()=>{
     try {
@@ -69,7 +72,10 @@ const handleSearch = async (e) => {
   }
 };
 
-
+if(!localStorage.getItem('admin')){
+  return(<Navigate to={'/login'}/>
+  )
+}
   return (
     <>
     <div className='container align-items-center  mt-3'>
